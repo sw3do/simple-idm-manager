@@ -51,6 +51,8 @@ jobs:
     if: github.event_name == 'release'
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     strategy:
       matrix:
         goos: [linux, windows, darwin]
@@ -80,11 +82,9 @@ jobs:
         fi
     
     - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./dist/simple-idm-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.goos == 'windows' && '.exe' || '' }}
-        asset_name: simple-idm-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.goos == 'windows' && '.exe' || '' }}
-        asset_content_type: application/octet-stream
+      run: |
+        asset_name="simple-idm-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.goos == 'windows' && '.exe' || '' }}"
+        asset_path="./dist/${asset_name}"
+        gh release upload ${{ github.event.release.tag_name }} "${asset_path}" --clobber
