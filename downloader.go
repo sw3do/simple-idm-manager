@@ -16,10 +16,10 @@ type Downloader struct {
 }
 
 type ProgressTracker struct {
-	totalSize     int64
-	downloaded    int64
-	startTime     time.Time
-	mu            sync.Mutex
+	totalSize  int64
+	downloaded int64
+	startTime  time.Time
+	mu         sync.Mutex
 }
 
 func NewDownloader(connections int) *Downloader {
